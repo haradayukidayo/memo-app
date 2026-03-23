@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8">
+  <title>メモアプリ</title>
+
+  <style>
+    body {
+  font-family: -apple-system, BlinkMacSystemFont;
+  background: #e5e5ea;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+
+/* スマホ枠 */
+.container {
+  width: 375px; /* iPhoneサイズ */
+  height: 600px;
+  background: #f2f2f7;
+  border-radius: 30px;
+  padding: 20px;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+  overflow-y: auto;
+}
+
+/* タイトル */
+h1 {
+  text-align: center;
+  font-size: 20px;
+}
+
+/* 入力 */
+input {
+  width: 100%;
+  padding: 12px;
+  border-radius: 12px;
+  border: none;
+  margin-bottom: 10px;
+}
+
+/* ボタン */
+button {
+  width: 100%;
+}
+
+/* 削除ボタンは別扱い */
+.delete {
+  width: auto;
+
+  padding: 12px;
+  border-radius: 12px;
+  background: #007aff; /* iPhoneっぽい青 */
+  color: white;
+  border: none;
+}
+
+/* メモ */
+li {
+  background: white;
+  margin-top: 10px;
+  padding: 10px;
+  border-radius: 12px;
+}
+.delete {
+  background: #ddd;
+  color: #555;
+  border: none;
+  border-radius: 6px;
+  padding: 3px 6px;
+  font-size: 12px;
+  cursor: pointer;
+  margin-left: 10px;
+}
+
+.delete:hover {
+  background: #ccc;
+}
+
+/* 横並びにする */
+li {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+/* 削除アニメーション */
+.fadeOut {
+  animation: fadeOut 0.3s forwards;
+}
+
+@keyframes fadeOut {
+  to {
+    opacity: 0;
+    transform: translateX(50px);
+  }
+}
+  </style>
+
+</head>
+<body>
+
+<div class="container">
+
+<h1>メモアプリ</h1>
+
+<input id="memo" placeholder="ここに入力">
+<button onclick="save()">保存</button>
+
+<ul id="list"></ul>
+
+</div>
+
+<script>
+function save() {
+  const text = document.getElementById("memo").value
+
+  let memos = JSON.parse(localStorage.getItem("memos")) || []
+  memos.push(text)
+  localStorage.setItem("memos", JSON.stringify(memos))
+
+  display()
+}
+
+function deleteMemo(index, element) {
+  element.classList.add("fadeOut")
+
+  setTimeout(() => {
+    let memos = JSON.parse(localStorage.getItem("memos")) || []
+    memos.splice(index, 1)
+    localStorage.setItem("memos", JSON.stringify(memos))
+    display()
+  }, 300)
+}
+
+function display() {
+  const list = document.getElementById("list")
+  list.innerHTML = ""
+
+  let memos = JSON.parse(localStorage.getItem("memos")) || []
+
+  memos.forEach((memo, index) => {
+    const li = document.createElement("li")
+
+    const span = document.createElement("span")
+    span.textContent = memo
+
+    const btn = document.createElement("button")
+    btn.textContent = "削除"
+    btn.className = "delete"
+    btn.onclick = () => deleteMemo(index, li)
+
+    li.appendChild(span)
+    li.appendChild(btn)
+
+    list.appendChild(li)
+  })
+}
+
+display()
+</script>
+
+</body>
+</html>
